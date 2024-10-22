@@ -28,6 +28,26 @@
     </div>
 </div>
 
+<script>
+    const input = document.querySelector('#drawingUpload');
+    const img = document.querySelector('.header-image');
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            img.src = reader.result; // Atualiza a imagem com o blob URL
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); // Lê o arquivo como URL de dados
+        } else {
+            img.src = ''; // Limpa a imagem se nenhum arquivo for selecionado
+        }
+    });
+</script>
+
     <div class="container">
     <h2>Carregue Seu Desenho</h2>
     <form>
@@ -60,5 +80,8 @@
     });
 </script>
 
+
+
+    
 </body>
 </html>
