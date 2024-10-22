@@ -3,76 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Repositório de Vídeos</title>
+    <title>EJA CAP UFRGS</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Cor de fundo suave */
         }
         header {
-            background: #35424a;
+            background: #6a1b9a;
             color: white;
-            padding: 20px 0;
+            padding: 20px;
             text-align: center;
         }
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-        }
         h1 {
+            font-size: 2.5em;
             margin: 0;
         }
-        ul {
-            list-style: none;
-            padding: 0;
+        p {
+            font-size: 1.2em;
+            margin: 5px 0;
         }
-        li {
-            background: #fff;
-            margin: 10px 0;
+        .subheader {
+            font-size: 1em;
+            margin-top: 10px;
+            opacity: 0.8; /* Levemente transparente */
+        }
+        .video-list {
+            margin: 20px;
             padding: 20px;
-            border: 1px solid #ddd;
+            background-color: white;
             border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        a {
+        .video-item {
+            margin: 10px 0;
+        }
+        .video-item a {
             text-decoration: none;
-            color: #35424a;
+            color: #6a1b9a;
         }
-        a:hover {
-            color: #e8491d;
+        .video-item a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-<header style="background: #6a1b9a; color: white; padding: 40px 0; text-align: center; position: relative;">
-    <h1 style="font-size: 3em; margin: 0;">EJA CAp UFRGS</h1>
-    <p style="font-size: 1.5em; margin: 10px 0;">Explorando Criatividade e Conhecimento!</p>
-    <div style="position: absolute; bottom: 30px; width: 100%;">
-        <h3 style="font-size: 1.2em; margin: 0;">Participe do nosso espaço colaborativo!</h3>
-        <p style="font-size: 1em;">Aqui você pode compartilhar seus trabalhos e vídeos. Vamos juntos!</p>
-    </div>
+
+<header>
+    <h1>EJA CAP UFRGS</h1>
+    <p>Explorando Criatividade e Conhecimento!</p>
+    <p class="subheader">Participe do nosso espaço colaborativo!</p>
+    <p class="subheader">Aqui você pode compartilhar seus trabalhos e vídeos. Vamos juntos!</p>
 </header>
 
-
-<div class="container">
-    <h2>Vídeos Selecionados</h2>
-    <ul>
-        <li>
-            <h3><a href="https://www.youtube.com/watch?v=video_id_1" target="_blank">Título do Vídeo 1</a></h3>
-            <p>Descrição breve do vídeo 1. Este vídeo fala sobre...</p>
-        </li>
-        <li>
-            <h3><a href="https://www.youtube.com/watch?v=video_id_2" target="_blank">Título do Vídeo 2</a></h3>
-            <p>Descrição breve do vídeo 2. Neste vídeo você aprenderá sobre...</p>
-        </li>
-        <li>
-            <h3><a href="https://www.youtube.com/watch?v=video_id_3" target="_blank">Título do Vídeo 3</a></h3>
-            <p>Descrição breve do vídeo 3. O foco deste vídeo é...</p>
-        </li>
-        <!-- Adicione mais vídeos conforme necessário -->
-    </ul>
+<div class="video-list">
+    <h2>Vídeos dos Alunos</h2>
+    <div class="video-item">
+        <h3><a href="https://www.youtube.com/watch?v=video_id_1" target="_blank">Título do Vídeo 1</a></h3>
+        <p>Descrição breve do vídeo 1.</p>
+    </div>
+    <div class="video-item">
+        <h3><a href="https://www.youtube.com/watch?v=video_id_2" target="_blank">Título do Vídeo 2</a></h3>
+        <p>Descrição breve do vídeo 2.</p>
+    </div>
+    <div class="video-item">
+        <h3><a href="https://www.youtube.com/watch?v=video_id_3" target="_blank">Título do Vídeo 3</a></h3>
+        <p>Descrição breve do vídeo 3.</p>
+    </div>
+    <!-- Adicione mais vídeos conforme necessário -->
 </div>
 
 </body>
