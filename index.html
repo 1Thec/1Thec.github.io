@@ -3,79 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EJA CAp UFRGS</title>
+    <title>EJA CAP UFRGS - Trabalhos dos Alunos</title>
     <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Cor de fundo suave */
-        }
-        header {
-            background: #6a1b9a;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin: 0;
-        }
-        p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-        .subheader {
-            font-size: 1em;
-            margin-top: 10px;
-            opacity: 0.8; /* Levemente transparente */
-        }
-        .video-list {
-            margin: 20px;
-            padding: 20px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .video-item {
-            margin: 10px 0;
-        }
-        .video-item a {
-            text-decoration: none;
-            color: #6a1b9a;
-        }
-        .video-item a:hover {
-            text-decoration: underline;
-        }
+        /* Estilos como anteriormente */
     </style>
 </head>
 <body>
 
 <header>
-    https://github.com/1Thec/1Thec.github.io/blob/main/OIP.jpeg
-        <img src="https://github.com/1Thec/1Thec.github.io/blob/main/OIP.jpeg" alt="CAp UFRGS" class="header-image" />
-
     <h1>EJA CAP UFRGS</h1>
-    <p>Explorando Criatividade e Conhecimento!</p>
-    <p class="subheader">Participe do nosso espaço colaborativo!</p>
-    <p class="subheader">Aqui você pode compartilhar seus trabalhos e vídeos. Vamos juntos!</p>
+    <p>Espaço para compartilhar suas criações!</p>
 </header>
 
-<div class="video-list">
-    <h2>Vídeos dos Alunos</h2>
-    <div class="video-item">
-        <h3><a href="https://www.youtube.com/watch?v=video_id_1" target="_blank">Título do Vídeo 1</a></h3>
-        <p>Descrição breve do vídeo 1.</p>
+<div class="container">
+    <h2>Carregue Seu Desenho</h2>
+    <form>
+        <label for="drawingUpload">Escolha um arquivo de imagem:</label><br>
+        <input type="file" id="drawingUpload" accept="image/*"><br><br>
+    </form>
+    
+    <div class="drawing">
+        <h3>Seu Desenho:</h3>
+        <img src="" alt="Desenho do aluno" class="header-image" />
     </div>
-    <div class="video-item">
-        <h3><a href="https://www.youtube.com/watch?v=video_id_2" target="_blank">Título do Vídeo 2</a></h3>
-        <p>Descrição breve do vídeo 2.</p>
-    </div>
-    <div class="video-item">
-        <h3><a href="https://www.youtube.com/watch?v=video_id_3" target="_blank">Título do Vídeo 3</a></h3>
-        <p>Descrição breve do vídeo 3.</p>
-    </div>
-    <!-- Adicione mais vídeos conforme necessário -->
 </div>
+
+<script>
+    const input = document.querySelector('#drawingUpload');
+    const img = document.querySelector('.header-image');
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            img.src = reader.result; // Atualiza a imagem com o blob URL
+        }
+
+        if (file) {
+            reader.readAsDataURL(file); // Lê o arquivo como URL de dados
+        } else {
+            img.src = ''; // Limpa a imagem se nenhum arquivo for selecionado
+        }
+    });
+</script>
 
 </body>
 </html>
