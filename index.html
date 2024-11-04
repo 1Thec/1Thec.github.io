@@ -4,18 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeria de Trabalhos dos Alunos</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <header>
         <h1>Galeria de Trabalhos dos Alunos</h1>
-        <p>Armazene e exiba imagens e textos dos alunos</p>
+        <p>Carregue e compartilhe suas criações!</p>
     </header>
 
-    <div class="container" id="gallery">
-        <!-- Galeria de Trabalhos será gerada aqui -->
+    <div class="container">
+        <h2>Carregar Novo Trabalho</h2>
+        <form id="uploadForm">
+            <label for="imageUpload">Escolha um arquivo de imagem:</label><br>
+            <input type="file" id="imageUpload" accept="image/*"><br><br>
+            <label for="description">Descrição do trabalho:</label><br>
+            <textarea id="description" rows="3" placeholder="Escreva uma descrição para o trabalho..."></textarea><br>
+            <button type="button" onclick="uploadWork()">Enviar Trabalho</button>
+        </form>
     </div>
 
-    <script src="scripts.js"></script>
+    <div class="container gallery" id="gallery">
+        <!-- Trabalhos carregados serão exibidos aqui -->
+    </div>
+
+    <!-- Firebase JS SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+    
+    <script>
+        // Configuração do Firebase (substitua com as informações do seu projeto)
+        const firebaseConfig = {
+            apiKey: "SUA_API_KEY",
+            authDomain: "SEU_AUTH_DOMAIN",
+            projectId: "SEU_PROJECT_ID",
+            storageBucket: "SEU_STORAGE_BUCKET",
+            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+            appId: "SEU_APP_ID"
+        };
+
+        // Inicialize o Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Função para carregar o trabalho
+        async function uploadWork() {
+            const fileInput = document.querySelector('#imageUpload');
+            const description = document.querySelector('#description').value;
+            const file = fileInput.files[0];
+
+            if (!file || !description) {
+                alert("Por favor, selecione uma imagem e insira uma descrição.");
+                return;
+            }
+
+            // Envia a imagem para o Firebase Storage
+            const storageRef = storage.ref('imagens/' + file.name);
+            await storageRef.put(file);
+            const imageUrl = await storageRef.getDownloadURL();
+
+            // Salva a URL da imagem e descrição no Firestore
+            await db.collection("trabalhos").add({
+                imageUrl: imageUrl,
+                description: description,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Limpa o formulário e exibe a nova galeria
+            fileInput.value = '';
+            document.querySelector('#description').value = '';
+            displayGallery();
+        }
+
+        // Função para exibir a galeria
+        async function displayGallery() {
+            const gallery = document.getElementById('gallery');
+            gallery.innerHTML = ''; // Limpa a galeria
+
+            const snapshot = await db.collection("trabalhos").orderBy("timestamp", "desc").get();
+            snapshot.forEach(doc => {
+                const data = doc.data();
+
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
+
+                const img = document.createElement('img');
+                img.src = data.imageUrl;
+                img.alt = "Imagem do trabalho";
+
+                const desc = document.createElement('p');
+                desc.classList.add('description');
+                desc.textContent = data.description;
+
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(desc);
+                gallery.appendChild(galleryItem);
+            });
+        }
+
+        // Carrega a galeria ao iniciar
+        displayGallery();
+    </script>
 </body>
 </html>
