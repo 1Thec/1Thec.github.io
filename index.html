@@ -5,9 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeria de Trabalhos dos Alunos</title>
     <style>
+/* Estilos gerais */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+               /* Estilo do cabeçalho com imagem de fundo */
+        header {
+            background-image: url('URL_DA_IMAGEM_DO_CABECALHO');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        /* Sombra no texto para melhor contraste */
+        header h1 {
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin: 10px 0;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
         }
         .container {
             max-width: 500px;
@@ -52,7 +78,7 @@
 
 <header>
     <h1>Galeria de Trabalhos dos Alunos</h1>
-    <p>Carregue e compartilhe suas criações! (Limite: 10 alunos)</p>
+    <p>Carregue e compartilhe suas criações!</p>
 </header>
 
 <div class="container">
@@ -82,7 +108,7 @@
         const file = fileInput.files[0];
 
         // Limite de 10 alunos
-        if (galleryData.length >= 10) {
+        if (galleryData.length >= 15) {
             alert("Limite de 10 alunos atingido!");
             return;
         }
@@ -124,8 +150,16 @@
             img.src = item.imageUrl;
             img.alt = "Imagem do trabalho";
 
+          
+
             const desc = document.createElement('p');
             desc.textContent = item.description;
+
+              // Cria o link para a imagem
+            const link = document.createElement('a');
+            link.href = item.imageUrl;
+            link.target = "_blank";
+            link.textContent = item.description;
 
             // Botão para excluir o item
             const deleteButton = document.createElement('button');
