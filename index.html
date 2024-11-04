@@ -3,23 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria de Trabalhos dos Alunos</title><!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EJA CAP UFRGS - Trabalhos dos Alunos</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Galeria de Trabalhos dos Alunos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            text-align: left;
+        }
+        .gallery {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            text-align: center;
+        }
+        .gallery-item img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .gallery-item button {
+            margin-top: 10px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .gallery-item button:hover {
+            background-color: #ff1a1a;
+        }
+    </style>
 </head>
 <body>
 
 <header>
-    <h1>EJA CAP UFRGS</h1>
-    <p>Espaço para compartilhar suas criações!</p>
+    <h1>Galeria de Trabalhos dos Alunos</h1>
+    <p>Carregue e compartilhe suas criações! (Limite: 10 alunos)</p>
 </header>
 
 <div class="container">
-    <h2>Carregue Novo Trabalho</h2>
+    <h2>Carregar Novo Trabalho</h2>
     <form id="uploadForm">
         <label for="drawingUpload">Escolha uma imagem:</label><br>
         <input type="file" id="drawingUpload" accept="image/*"><br><br>
@@ -34,82 +71,70 @@
     <!-- Trabalhos carregados serão exibidos aqui -->
 </div>
 
-<!-- Firebase JS SDK -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
-
 <script>
-    // Configuração do Firebase (substitua com as informações do seu projeto)
-    const firebaseConfig = {
-        apiKey: "SUA_API_KEY",
-        authDomain: "SEU_AUTH_DOMAIN",
-        projectId: "SEU_PROJECT_ID",
-        storageBucket: "SEU_STORAGE_BUCKET",
-        messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-        appId: "SEU_APP_ID"
-    };
-
-    // Inicialize o Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
+    // Array para armazenar os trabalhos (máximo de 10)
+    const galleryData = [];
 
     // Função para carregar o trabalho
-    async function uploadWork() {
-        const fileInput = document.querySelector('#drawingUpload');
-        const description = document.querySelector('#description').value;
+    function uploadWork() {
+        const fileInput = document.getElementById('drawingUpload');
+        const description = document.getElementById('description').value;
         const file = fileInput.files[0];
+
+        // Limite de 10 alunos
+        if (galleryData.length >= 10) {
+            alert("Limite de 10 alunos atingido!");
+            return;
+        }
 
         if (!file || !description) {
             alert("Por favor, selecione uma imagem e insira uma descrição.");
             return;
         }
 
-        // Envia a imagem para o Firebase Storage
-        const storageRef = storage.ref('imagens/' + file.name);
-        await storageRef.put(file);
-        const imageUrl = await storageRef.getDownloadURL();
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            // Adiciona o trabalho ao array
+            const work = {
+                imageUrl: event.target.result,
+                description: description
+            };
+            galleryData.push(work);
 
-        // Salva a URL da imagem e descrição no Firestore
-        const docRef = await db.collection("trabalhos").add({
-            imageUrl: imageUrl,
-            description: description,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
+            // Atualiza a galeria
+            displayGallery();
 
-        // Limpa o formulário e atualiza a galeria
-        fileInput.value = '';
-        document.querySelector('#description').value = '';
-        displayGallery();
+            // Limpa o formulário
+            fileInput.value = '';
+            document.getElementById('description').value = '';
+        };
+        reader.readAsDataURL(file); // Converte a imagem para URL
     }
 
     // Função para exibir a galeria
-    async function displayGallery() {
+    function displayGallery() {
         const gallery = document.getElementById('gallery');
-        gallery.innerHTML = ''; // Limpa a galeria
+        gallery.innerHTML = '<h2>Galeria de Trabalhos</h2>'; // Limpa a galeria e redefine o título
 
-        const snapshot = await db.collection("trabalhos").orderBy("timestamp", "desc").get();
-        snapshot.forEach(doc => {
-            const data = doc.data();
-            const docId = doc.id;
-
+        galleryData.forEach((item, index) => {
             const galleryItem = document.createElement('div');
             galleryItem.classList.add('gallery-item');
 
             const img = document.createElement('img');
-            img.src = data.imageUrl;
+            img.src = item.imageUrl;
             img.alt = "Imagem do trabalho";
 
             const desc = document.createElement('p');
-            desc.classList.add('description');
-            desc.textContent = data.description;
+            desc.textContent = item.description;
 
             // Botão para excluir o item
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Excluir';
-            deleteButton.onclick = () => deleteWork(docId);
+            deleteButton.onclick = () => {
+                deleteWork(index);
+            };
 
+            // Adiciona a imagem, descrição e botão ao item da galeria
             galleryItem.appendChild(img);
             galleryItem.appendChild(desc);
             galleryItem.appendChild(deleteButton);
@@ -118,149 +143,11 @@
     }
 
     // Função para deletar o trabalho
-    async function deleteWork(docId) {
-        if (confirm("Tem certeza de que deseja excluir este trabalho?")) {
-            await db.collection("trabalhos").doc(docId).delete();
-            displayGallery(); // Atualiza a galeria após a exclusão
-        }
+    function deleteWork(index) {
+        galleryData.splice(index, 1); // Remove o item do array
+        displayGallery(); // Atualiza a galeria
     }
-
-    // Carrega a galeria ao iniciar
-    displayGallery();
 </script>
 
-</body>
-</html>
-
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>Galeria de Trabalhos dos Alunos</h1>
-        <p>Carregue e compartilhe suas criações!</p>
-    </header>
-
-    <div class="container">
-        <h2>Carregar Novo Trabalho</h2>
-        <form id="uploadForm">
-            <label for="imageUpload">Escolha um arquivo de imagem:</label><br>
-            <input type="file" id="imageUpload" accept="image/*"><br><br>
-            <label for="description">Descrição do trabalho:</label><br>
-            <textarea id="description" rows="3" placeholder="Escreva uma descrição para o trabalho..."></textarea><br>
-            <button type="button" onclick="uploadWork()">Enviar Trabalho</button>
-        </form>
-    </div>
-
-    <div class="container gallery" id="gallery">
-        <!-- Trabalhos carregados serão exibidos aqui -->
-    </div>
-
-    <!-- Firebase JS SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-    
-    <script>
-        // Configuração do Firebase (substitua com as informações do seu projeto)
-        const firebaseConfig = {
-            apiKey: "SUA_API_KEY",
-            authDomain: "SEU_AUTH_DOMAIN",
-            projectId: "SEU_PROJECT_ID",
-            storageBucket: "SEU_STORAGE_BUCKET",
-            messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-            appId: "SEU_APP_ID"
-        };
-
-        // Inicialize o Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-        const auth = firebase.auth();
-
-        // Autenticação anônima para permitir o upload de trabalhos
-        auth.signInAnonymously().catch((error) => {
-            console.error("Erro ao autenticar: ", error);
-        });
-
-        // Função para carregar o trabalho
-        async function uploadWork() {
-            const fileInput = document.querySelector('#imageUpload');
-            const description = document.querySelector('#description').value;
-            const file = fileInput.files[0];
-
-            if (!file || !description) {
-                alert("Por favor, selecione uma imagem e insira uma descrição.");
-                return;
-            }
-
-            // Envia a imagem para o Firebase Storage
-            const storageRef = storage.ref('imagens/' + file.name);
-            await storageRef.put(file);
-            const imageUrl = await storageRef.getDownloadURL();
-
-            // Salva a URL da imagem e descrição no Firestore
-            await db.collection("trabalhos").add({
-                imageUrl: imageUrl,
-                description: description,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            // Limpa o formulário e exibe a nova galeria
-            fileInput.value = '';
-            document.querySelector('#description').value = '';
-            displayGallery();
-        }
-
-        // Função para exibir a galeria com rolagem infinita
-        async function displayGallery(lastVisibleDoc = null) {
-            const gallery = document.getElementById('gallery');
-
-            // Define o número de trabalhos a carregar por vez
-            const limit = 5;
-
-            // Cria uma consulta para carregar trabalhos
-            let query = db.collection("trabalhos")
-                .orderBy("timestamp", "desc")
-                .limit(limit);
-
-            if (lastVisibleDoc) {
-                query = query.startAfter(lastVisibleDoc);
-            }
-
-            const snapshot = await query.get();
-            const docs = snapshot.docs;
-            const lastDoc = docs[docs.length - 1];
-
-            docs.forEach(doc => {
-                const data = doc.data();
-
-                const galleryItem = document.createElement('div');
-                galleryItem.classList.add('gallery-item');
-
-                const img = document.createElement('img');
-                img.src = data.imageUrl;
-                img.alt = "Imagem do trabalho";
-
-                const desc = document.createElement('p');
-                desc.classList.add('description');
-                desc.textContent = data.description;
-
-                galleryItem.appendChild(img);
-                galleryItem.appendChild(desc);
-                gallery.appendChild(galleryItem);
-            });
-
-            // Carrega mais itens ao rolar para baixo
-            window.onscroll = () => {
-                if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-                    displayGallery(lastDoc);
-                }
-            };
-        }
-
-        // Carrega a galeria ao iniciar
-        displayGallery();
-    </script>
 </body>
 </html>
