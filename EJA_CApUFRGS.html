@@ -3,9 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EJA CAP UFRGS - Trabalhos dos Alunos</title>
+    <title>Galeria de Trabalhos dos Alunos</title>
     <style>
-        /* Estilos como anteriormente */
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            text-align: center;
+            padding: 1rem;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 1rem;
+        }
         .gallery {
             display: flex;
             flex-wrap: wrap;
@@ -15,68 +27,116 @@
         .gallery-item {
             width: 200px;
             text-align: center;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
         }
         .gallery-item img {
             width: 100%;
             height: auto;
-            border: 1px solid #ddd;
             border-radius: 5px;
+        }
+        textarea {
+            width: 100%;
+            margin-top: 10px;
+            resize: vertical;
+        }
+        .button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>EJA CAP UFRGS</h1>
-    <p>Espaço para compartilhar suas criações!</p>
+    <h1>Galeria de Trabalhos dos Alunos</h1>
+    <p>Carregue imagens e adicione uma descrição para cada trabalho</p>
 </header>
 
 <div class="container">
-    <h2>Carregue Seu Desenho</h2>
-    <form>
-        <label for="drawingUpload">Escolha um arquivo de imagem:</label><br>
-        <input type="file" id="drawingUpload" accept="image/*"><br><br>
+    <h2>Carregar Novo Trabalho</h2>
+    <form id="uploadForm">
+        <label for="imageUpload">Escolha um arquivo de imagem:</label><br>
+        <input type="file" id="imageUpload" accept="image/*"><br><br>
+        <label for="description">Descrição do trabalho:</label><br>
+        <textarea id="description" rows="3" placeholder="Escreva uma descrição para o trabalho..."></textarea><br>
+        <button type="button" class="button" onclick="addWork()">Adicionar Trabalho</button>
     </form>
 </div>
 
 <div class="container gallery" id="gallery">
-    <!-- Imagens carregadas serão adicionadas aqui -->
+    <!-- Trabalhos carregados serão adicionados aqui -->
 </div>
 
 <script>
-    const input = document.querySelector('#drawingUpload');
-    const gallery = document.querySelector('#gallery');
+    // Array para armazenar os trabalhos dos alunos temporariamente
+    const galleryData = [];
 
-    input.addEventListener('change', () => {
-        const file = input.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                // Cria um novo item de galeria para cada imagem carregada
-                const galleryItem = document.createElement('div');
-                galleryItem.classList.add('gallery-item');
-                
-                // Cria o elemento de imagem
-                const img = document.createElement('img');
-                img.src = reader.result; // Atualiza a imagem com o blob URL
-                img.alt = "Desenho do aluno";
+    function addWork() {
+        const fileInput = document.querySelector('#imageUpload');
+        const description = document.querySelector('#description').value;
 
-                // Cria uma área de descrição
-                const description = document.createElement('textarea');
-                description.placeholder = "Escreva uma descrição sobre o desenho...";
-                description.rows = 3;
-                description.style.width = "100%";
-
-                // Adiciona a imagem e a descrição ao item da galeria
-                galleryItem.appendChild(img);
-                galleryItem.appendChild(description);
-
-                // Adiciona o item de galeria à galeria principal
-                gallery.appendChild(galleryItem);
-            };
-            reader.readAsDataURL(file); // Lê o arquivo como URL de dados
+        if (fileInput.files.length === 0) {
+            alert("Por favor, selecione uma imagem.");
+            return;
         }
-    });
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            const imageSrc = reader.result;
+            
+            // Adiciona o trabalho ao array de dados da galeria
+            const workItem = {
+                image: imageSrc,
+                description: description
+            };
+            galleryData.push(workItem);
+
+            // Atualiza a galeria exibida
+            displayGallery();
+
+            // Limpa o formulário
+            fileInput.value = '';
+            document.querySelector('#description').value = '';
+        };
+
+        reader.readAsDataURL(file); // Lê o arquivo como URL de dados
+    }
+
+    function displayGallery() {
+        const gallery = document.querySelector('#gallery');
+        gallery.innerHTML = ''; // Limpa a galeria antes de atualizar
+
+        galleryData.forEach((item, index) => {
+            // Cria um novo item de galeria
+            const galleryItem = document.createElement('div');
+            galleryItem.classList.add('gallery-item');
+
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = "Desenho do aluno";
+
+            const desc = document.createElement('p');
+            desc.textContent = item.description;
+
+            // Adiciona imagem e descrição ao item da galeria
+            galleryItem.appendChild(img);
+            galleryItem.appendChild(desc);
+
+            // Adiciona o item de galeria à galeria principal
+            gallery.appendChild(galleryItem);
+        });
+    }
 </script>
 
 </body>
