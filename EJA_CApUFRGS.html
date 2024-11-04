@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EJA CAP UFRGS - Trabalhos dos Alunos</title>
+    <style>
+        /* Estilos como anteriormente */
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .gallery-item {
+            width: 200px;
+            text-align: center;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>EJA CAP UFRGS</h1>
+    <p>Espaço para compartilhar suas criações!</p>
+</header>
+
+<div class="container">
+    <h2>Carregue Seu Desenho</h2>
+    <form>
+        <label for="drawingUpload">Escolha um arquivo de imagem:</label><br>
+        <input type="file" id="drawingUpload" accept="image/*"><br><br>
+    </form>
+</div>
+
+<div class="container gallery" id="gallery">
+    <!-- Imagens carregadas serão adicionadas aqui -->
+</div>
+
+<script>
+    const input = document.querySelector('#drawingUpload');
+    const gallery = document.querySelector('#gallery');
+
+    input.addEventListener('change', () => {
+        const file = input.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                // Cria um novo item de galeria para cada imagem carregada
+                const galleryItem = document.createElement('div');
+                galleryItem.classList.add('gallery-item');
+                
+                // Cria o elemento de imagem
+                const img = document.createElement('img');
+                img.src = reader.result; // Atualiza a imagem com o blob URL
+                img.alt = "Desenho do aluno";
+
+                // Cria uma área de descrição
+                const description = document.createElement('textarea');
+                description.placeholder = "Escreva uma descrição sobre o desenho...";
+                description.rows = 3;
+                description.style.width = "100%";
+
+                // Adiciona a imagem e a descrição ao item da galeria
+                galleryItem.appendChild(img);
+                galleryItem.appendChild(description);
+
+                // Adiciona o item de galeria à galeria principal
+                gallery.appendChild(galleryItem);
+            };
+            reader.readAsDataURL(file); // Lê o arquivo como URL de dados
+        }
+    });
+</script>
+
+</body>
+</html>
