@@ -5,73 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeria de Trabalhos dos Alunos</title>
     <style>
-/* Estilos gerais */
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-
-               /* Estilo do cabeçalho com imagem de fundo */
-        header {
-            background-image: url('URL_DA_IMAGEM_DO_CABECALHO');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
-        /* Sombra no texto para melhor contraste */
-        header h1 {
-            font-size: 2.5em;
-            margin: 0;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-        }
-
-        header p {
-            font-size: 1.2em;
-            margin: 10px 0;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
-        }
-        .container {
-            max-width: 500px;
-            margin: auto;
-            padding: 20px;
-            text-align: left;
-        }
-        .gallery {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .gallery-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
-        }
-        .gallery-item img {
-            max-width: 100%;
-            border-radius: 5px;
-        }
-        .gallery-item button {
-            margin-top: 10px;
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .gallery-item button:hover {
-            background-color: #ff1a1a;
-        }
+        /* Insira o estilo do seu cabeçalho e galeria aqui */
     </style>
 </head>
 <body>
@@ -87,7 +21,7 @@
         <label for="drawingUpload">Escolha uma imagem:</label><br>
         <input type="file" id="drawingUpload" accept="image/*"><br><br>
         <label for="description">Descrição do trabalho:</label><br>
-        <textarea id="description" rows="3" placeholder="Escreva uma descrição para o trabalho..."></textarea><br>
+        <textarea id="description" rows="3" placeholder="Escreva uma descrição..."></textarea><br>
         <button type="button" onclick="uploadWork()">Enviar Trabalho</button>
     </form>
 </div>
@@ -97,90 +31,81 @@
     <!-- Trabalhos carregados serão exibidos aqui -->
 </div>
 
-<script>
-    // Array para armazenar os trabalhos (máximo de 10)
-    const galleryData = [];
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
 
-    // Função para carregar o trabalho
-    function uploadWork() {
+<script>
+    // Configuração do Firebase (substitua com as informações do seu projeto)
+    const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_AUTH_DOMAIN",
+        projectId: "SEU_PROJECT_ID",
+        storageBucket: "SEU_STORAGE_BUCKET",
+        messagingSenderId: "SEU_MESSAGING_SENDER_ID",
+        appId: "SEU_APP_ID"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    async function uploadWork() {
         const fileInput = document.getElementById('drawingUpload');
         const description = document.getElementById('description').value;
         const file = fileInput.files[0];
-
-        // Limite de 10 alunos
-        if (galleryData.length >= 15) {
-            alert("Limite de 10 alunos atingido!");
-            return;
-        }
 
         if (!file || !description) {
             alert("Por favor, selecione uma imagem e insira uma descrição.");
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            // Adiciona o trabalho ao array
-            const work = {
-                imageUrl: event.target.result,
-                description: description
-            };
-            galleryData.push(work);
+        const storageRef = storage.ref('imagens/' + file.name);
+        await storageRef.put(file);
+        const imageUrl = await storageRef.getDownloadURL();
 
-            // Atualiza a galeria
-            displayGallery();
+        await db.collection("trabalhos").add({
+            imageUrl: imageUrl,
+            description: description,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
 
-            // Limpa o formulário
-            fileInput.value = '';
-            document.getElementById('description').value = '';
-        };
-        reader.readAsDataURL(file); // Converte a imagem para URL
+        fileInput.value = '';
+        document.getElementById('description').value = '';
+        displayGallery();
     }
 
-    // Função para exibir a galeria
-    function displayGallery() {
+    async function displayGallery() {
         const gallery = document.getElementById('gallery');
-        gallery.innerHTML = '<h2>Galeria de Trabalhos</h2>'; // Limpa a galeria e redefine o título
+        gallery.innerHTML = '<h2>Galeria de Trabalhos</h2>';
 
-        galleryData.forEach((item, index) => {
+        const snapshot = await db.collection("trabalhos").orderBy("timestamp", "desc").get();
+        snapshot.forEach(doc => {
+            const data = doc.data();
             const galleryItem = document.createElement('div');
             galleryItem.classList.add('gallery-item');
 
-            const img = document.createElement('img');
-            img.src = item.imageUrl;
-            img.alt = "Imagem do trabalho";
-
-          
-
-            const desc = document.createElement('p');
-            desc.textContent = item.description;
-
-              // Cria o link para a imagem
             const link = document.createElement('a');
-            link.href = item.imageUrl;
+            link.href = data.imageUrl;
             link.target = "_blank";
-            link.textContent = item.description;
+            link.textContent = data.description;
 
-            // Botão para excluir o item
             const deleteButton = document.createElement('button');
             deleteButton.textContent = 'Excluir';
-            deleteButton.onclick = () => {
-                deleteWork(index);
-            };
+            deleteButton.onclick = () => deleteWork(doc.id);
 
-            // Adiciona a imagem, descrição e botão ao item da galeria
-            galleryItem.appendChild(img);
-            galleryItem.appendChild(desc);
+            galleryItem.appendChild(link);
             galleryItem.appendChild(deleteButton);
             gallery.appendChild(galleryItem);
         });
     }
 
-    // Função para deletar o trabalho
-    function deleteWork(index) {
-        galleryData.splice(index, 1); // Remove o item do array
-        displayGallery(); // Atualiza a galeria
+    async function deleteWork(docId) {
+        await db.collection("trabalhos").doc(docId).delete();
+        displayGallery();
     }
+
+    displayGallery();
 </script>
 
 </body>
