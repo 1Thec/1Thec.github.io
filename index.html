@@ -31,6 +31,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
     
     <script>
         // Configuração do Firebase (substitua com as informações do seu projeto)
@@ -47,6 +48,12 @@
         const app = firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
+        const auth = firebase.auth();
+
+        // Autenticação anônima para permitir o upload de trabalhos
+        auth.signInAnonymously().catch((error) => {
+            console.error("Erro ao autenticar: ", error);
+        });
 
         // Função para carregar o trabalho
         async function uploadWork() {
@@ -77,13 +84,27 @@
             displayGallery();
         }
 
-        // Função para exibir a galeria
-        async function displayGallery() {
+        // Função para exibir a galeria com rolagem infinita
+        async function displayGallery(lastVisibleDoc = null) {
             const gallery = document.getElementById('gallery');
-            gallery.innerHTML = ''; // Limpa a galeria
 
-            const snapshot = await db.collection("trabalhos").orderBy("timestamp", "desc").get();
-            snapshot.forEach(doc => {
+            // Define o número de trabalhos a carregar por vez
+            const limit = 5;
+
+            // Cria uma consulta para carregar trabalhos
+            let query = db.collection("trabalhos")
+                .orderBy("timestamp", "desc")
+                .limit(limit);
+
+            if (lastVisibleDoc) {
+                query = query.startAfter(lastVisibleDoc);
+            }
+
+            const snapshot = await query.get();
+            const docs = snapshot.docs;
+            const lastDoc = docs[docs.length - 1];
+
+            docs.forEach(doc => {
                 const data = doc.data();
 
                 const galleryItem = document.createElement('div');
@@ -101,6 +122,13 @@
                 galleryItem.appendChild(desc);
                 gallery.appendChild(galleryItem);
             });
+
+            // Carrega mais itens ao rolar para baixo
+            window.onscroll = () => {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                    displayGallery(lastDoc);
+                }
+            };
         }
 
         // Carrega a galeria ao iniciar
