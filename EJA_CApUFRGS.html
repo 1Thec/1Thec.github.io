@@ -4,140 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Galeria de Trabalhos dos Alunos</title>
-    <style>
-        /* Estilos gerais */
-        body {
-            font-family: Arial, sans-serif;
-        }
-        header {
-            text-align: center;
-            padding: 1rem;
-        }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 1rem;
-        }
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .gallery-item {
-            width: 200px;
-            text-align: center;
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-        .gallery-item img {
-            width: 100%;
-            height: auto;
-            border-radius: 5px;
-        }
-        textarea {
-            width: 100%;
-            margin-top: 10px;
-            resize: vertical;
-        }
-        .button {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+    <header>
+        <h1>Galeria de Trabalhos dos Alunos</h1>
+        <p>Armazene e exiba imagens e textos dos alunos</p>
+    </header>
 
-<header>
-    <h1>Galeria de Trabalhos dos Alunos</h1>
-    <p>Carregue imagens e adicione uma descrição para cada trabalho</p>
-</header>
+    <div class="container" id="gallery">
+        <!-- Galeria de Trabalhos será gerada aqui -->
+    </div>
 
-<div class="container">
-    <h2>Carregar Novo Trabalho</h2>
-    <form id="uploadForm">
-        <label for="imageUpload">Escolha um arquivo de imagem:</label><br>
-        <input type="file" id="imageUpload" accept="image/*"><br><br>
-        <label for="description">Descrição do trabalho:</label><br>
-        <textarea id="description" rows="3" placeholder="Escreva uma descrição para o trabalho..."></textarea><br>
-        <button type="button" class="button" onclick="addWork()">Adicionar Trabalho</button>
-    </form>
-</div>
-
-<div class="container gallery" id="gallery">
-    <!-- Trabalhos carregados serão adicionados aqui -->
-</div>
-
-<script>
-    // Array para armazenar os trabalhos dos alunos temporariamente
-    const galleryData = [];
-
-    function addWork() {
-        const fileInput = document.querySelector('#imageUpload');
-        const description = document.querySelector('#description').value;
-
-        if (fileInput.files.length === 0) {
-            alert("Por favor, selecione uma imagem.");
-            return;
-        }
-
-        const file = fileInput.files[0];
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            const imageSrc = reader.result;
-            
-            // Adiciona o trabalho ao array de dados da galeria
-            const workItem = {
-                image: imageSrc,
-                description: description
-            };
-            galleryData.push(workItem);
-
-            // Atualiza a galeria exibida
-            displayGallery();
-
-            // Limpa o formulário
-            fileInput.value = '';
-            document.querySelector('#description').value = '';
-        };
-
-        reader.readAsDataURL(file); // Lê o arquivo como URL de dados
-    }
-
-    function displayGallery() {
-        const gallery = document.querySelector('#gallery');
-        gallery.innerHTML = ''; // Limpa a galeria antes de atualizar
-
-        galleryData.forEach((item, index) => {
-            // Cria um novo item de galeria
-            const galleryItem = document.createElement('div');
-            galleryItem.classList.add('gallery-item');
-
-            const img = document.createElement('img');
-            img.src = item.image;
-            img.alt = "Desenho do aluno";
-
-            const desc = document.createElement('p');
-            desc.textContent = item.description;
-
-            // Adiciona imagem e descrição ao item da galeria
-            galleryItem.appendChild(img);
-            galleryItem.appendChild(desc);
-
-            // Adiciona o item de galeria à galeria principal
-            gallery.appendChild(galleryItem);
-        });
-    }
-</script>
-
+    <script src="js/scripts.js"></script>
 </body>
 </html>
