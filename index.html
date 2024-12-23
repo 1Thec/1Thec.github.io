@@ -1,154 +1,38 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria de Trabalhos dos Alunos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-        }
-        .container {
-            max-width: 500px;
-            margin: auto;
-            padding: 20px;
-            text-align: left;
-        }
-        .gallery {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 20px;
-        }
-        .gallery-item {
-            border: 1px solid #ddd;
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 300px;
-            text-align: center;
-        }
-        .gallery-item a {
-            display: block;
-            color: #2b7dc9;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-        .gallery-item button {
-            margin-top: 10px;
-            background-color: #ff4d4d;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        .gallery-item button:hover {
-            background-color: #ff1a1a;
-        }
-    </style>
+    <title>Cosméticos Naturais</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<header>
-    <h1>Galeria de Trabalhos dos Alunos</h1>
-    <p>Carregue e compartilhe suas criações! (Limite: 10 alunos)</p>
-</header>
-
-<div class="container">
-    <h2>Carregar Novo Trabalho</h2>
-    <form id="uploadForm">
-        <label for="drawingUpload">Escolha uma imagem:</label><br>
-        <input type="file" id="drawingUpload" accept="image/*"><br><br>
-        <label for="description">Descrição do trabalho:</label><br>
-        <textarea id="description" rows="3" placeholder="Escreva uma descrição para o trabalho..."></textarea><br>
-        <button type="button" onclick="uploadWork()">Enviar Trabalho</button>
-    </form>
-</div>
-
-<div class="container gallery" id="gallery">
-    <h2>Galeria de Trabalhos</h2>
-    <!-- Trabalhos carregados serão exibidos aqui -->
-</div>
-
-<script>
-    // Array para armazenar os trabalhos (máximo de 10)
-    const galleryData = [];
-
-    // Função para carregar o trabalho
-    function uploadWork() {
-        const fileInput = document.getElementById('drawingUpload');
-        const description = document.getElementById('description').value;
-        const file = fileInput.files[0];
-
-        // Limite de 10 alunos
-        if (galleryData.length >= 10) {
-            alert("Limite de 10 alunos atingido!");
-            return;
-        }
-
-        if (!file || !description) {
-            alert("Por favor, selecione uma imagem e insira uma descrição.");
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            // Adiciona o trabalho ao array
-            const work = {
-                imageUrl: event.target.result,
-                description: description
-            };
-            galleryData.push(work);
-
-            // Atualiza a galeria
-            displayGallery();
-
-            // Limpa o formulário
-            fileInput.value = '';
-            document.getElementById('description').value = '';
-        };
-        reader.readAsDataURL(file); // Converte a imagem para URL
-    }
-
-    // Função para exibir a galeria como links
-    function displayGallery() {
-        const gallery = document.getElementById('gallery');
-        gallery.innerHTML = '<h2>Galeria de Trabalhos</h2>'; // Limpa a galeria e redefine o título
-
-        galleryData.forEach((item, index) => {
-            const galleryItem = document.createElement('div');
-            galleryItem.classList.add('gallery-item');
-
-            // Cria o link para a imagem
-            const link = document.createElement('a');
-            link.href = item.imageUrl;
-            link.target = "_blank";
-            link.textContent = item.description;
-
-            // Botão para excluir o item
-            const deleteButton = document.createElement('button');
-            deleteButton.textContent = 'Excluir';
-            deleteButton.onclick = () => {
-                deleteWork(index);
-            };
-
-            // Adiciona o link e botão ao item da galeria
-            galleryItem.appendChild(link);
-            galleryItem.appendChild(deleteButton);
-            gallery.appendChild(galleryItem);
-        });
-    }
-
-    // Função para deletar o trabalho
-    function deleteWork(index) {
-        galleryData.splice(index, 1); // Remove o item do array
-        displayGallery(); // Atualiza a galeria
-    }
-</script>
-
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#produtos">Produtos</a></li>
+                <li><a href="#sobre">Sobre Nós</a></li>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section id="home">
+        <h1>Bem-vindo à Cosméticos Naturais</h1>
+        <p>Cuidados especiais para você.</p>
+    </section>
+    <section id="produtos">
+        <h2>Nossos Produtos</h2>
+        <div class="produto">
+            <img src="produto1.jpg" alt="Produto 1">
+            <h3>Creme Hidratante</h3>
+            <p>R$ 49,90</p>
+        </div>
+        <!-- Mais produtos aqui -->
+    </section>
+    <footer>
+        <p>© 2024 Cosméticos Naturais. Todos os direitos reservados.</p>
+    </footer>
 </body>
 </html>
