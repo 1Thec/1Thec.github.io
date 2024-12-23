@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosméticos N_Prazers</title>
+    <title>Cosméticos Elegantes</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
+        <h1> Elegancia N_Prazeres</h1>
         <nav>
             <ul>
                 <li><a href="#home">Home</a></li>
                 <li><a href="#produtos">Produtos</a></li>
                 <li><a href="#sobre">Sobre Nós</a></li>
-                <li><a href="#blog">Blog</a></li>
                 <li><a href="#contato">Contato</a></li>
             </ul>
         </nav>
     </header>
     <section id="home">
-        <h1>Bem-vindo à Cosméticos N_Prazeres</h1>
-        <p>Cuidados especiais para você.</p>
+        <h2>Bem-vindo!</h2>
+        <p>Descubra cosméticos com estilo minimalista e sofisticação.</p>
     </section>
     <section id="produtos">
         <h2>Nossos Produtos</h2>
@@ -29,10 +29,30 @@
             <h3>Creme Hidratante</h3>
             <p>R$ 49,90</p>
         </div>
-        <!-- Mais produtos aqui -->
+        <div class="produto">
+            <img src="produto2.jpg" alt="Produto 2">
+            <h3>Batom Matte</h3>
+            <p>R$ 39,90</p>
+        </div>
+    </section>
+    <section id="sobre">
+        <h2>Sobre Nós</h2>
+        <p>Cosméticos desenvolvidos com cuidado e paixão, feitos para realçar sua beleza natural.</p>
+    </section>
+    <section id="contato">
+        <h2>Contato</h2>
+        <form>
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required>
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required>
+            <label for="mensagem">Mensagem:</label>
+            <textarea id="mensagem" name="mensagem" required></textarea>
+            <button type="submit">Enviar</button>
+        </form>
     </section>
     <footer>
-        <p>© 2024 Cosméticos Naturais. Todos os direitos reservados.</p>
+        <p>© 2024 Cosméticos Elegantes. Todos os direitos reservados.</p>
     </footer>
 </body>
 </html>
